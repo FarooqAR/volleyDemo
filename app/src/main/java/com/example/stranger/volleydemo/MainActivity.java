@@ -1,7 +1,13 @@
 package com.example.stranger.volleydemo;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,15 +41,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
 
     private static final String TAG = "MainActivity";
-
+    private ViewPager movieListPager;
+    private MovieListPagerAdapter movieListPagerAdapter;
+    private ActionBar actionBar;
+    private String[] tabs = {"Box Office","Upcoming"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportFragmentManager().beginTransaction().add(R.id.box_office_fragment_container,new BoxOfficeFragment()).commit();
+        movieListPager = (ViewPager) findViewById(R.id.moviesPager);
+        actionBar = getSupportActionBar();
+        movieListPagerAdapter = new MovieListPagerAdapter(getSupportFragmentManager());
+        movieListPager.setAdapter(movieListPagerAdapter);
+//        actionBar.setHomeButtonEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        for(String tab: tabs){
+            actionBar.addTab(actionBar.newTab().setText(tab).setTabListener(this));
+        }
+        /*getSupportFragmentManager().beginTransaction().add(R.id.box_office_fragment_container,new UpcomingMoviesFragment()).commit();*/
 
     }
 
@@ -71,5 +89,22 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
     }
 }
