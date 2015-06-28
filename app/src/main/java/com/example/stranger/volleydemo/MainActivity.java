@@ -56,7 +56,25 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         actionBar = getSupportActionBar();
         movieListPagerAdapter = new MovieListPagerAdapter(getSupportFragmentManager());
         movieListPager.setAdapter(movieListPagerAdapter);
-//        actionBar.setHomeButtonEnabled(false);
+        actionBar.setHomeButtonEnabled(false);
+
+        movieListPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+                ;
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                actionBar.setSelectedNavigationItem(i);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         for(String tab: tabs){
             actionBar.addTab(actionBar.newTab().setText(tab).setTabListener(this));
@@ -94,17 +112,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fm) {
+        movieListPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fm) {
 
     }
 
     @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fm) {
 
     }
 
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-
-    }
 }
