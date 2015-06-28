@@ -29,7 +29,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     public MovieListAdapter(Context context, List<Movie> movies) {
         this.context = context;
         this.movies = movies;
-        Log.d(TAG,""+movies);
 
     }
 
@@ -45,10 +44,9 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     public void onBindViewHolder(MovieItemViewHolder holder, int i) {
         //bind data to each item in recyclerView
         Movie current = movies.get(i);
-        Log.d(TAG, "" + i);
         holder.title.setText(current.title);
         holder.release.setText("Release: "+current.release);
-        holder.score.setText("Score: "+current.score+"%");
+        holder.score.setText(" "+current.score+"%");
         holder.runtime.setText("Runtime: " + current.runtime + " mins");
         holder.thumbNail.setImageUrl(current.thumbnailUrl, loader);
 

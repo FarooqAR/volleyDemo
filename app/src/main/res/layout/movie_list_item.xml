@@ -13,8 +13,9 @@
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/thumbnail"
+            android:layout_centerVertical="true"
             android:layout_width="72dp"
-            android:layout_height="72dp" />
+            android:layout_height="88dp" />
 
         <TextView
             android:id="@+id/title"
@@ -33,13 +34,12 @@
             android:layout_below="@+id/title"
             android:layout_toEndOf="@+id/thumbnail"
             android:layout_toRightOf="@+id/thumbnail"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/release"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Release Date"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -47,20 +47,19 @@
                 android:id="@+id/runtime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Runtime: 120 minutes"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+            <TextView
+                android:id="@+id/score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/tomato"
+                android:drawableLeft="@drawable/tomato"
+                android:text="90%"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/score"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/linearLayout"
-            android:layout_toEndOf="@+id/thumbnail"
-            android:layout_toRightOf="@+id/thumbnail"
-            android:text="Score: 90% Rotten Tomatoes"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+
 
     </RelativeLayout>
 
