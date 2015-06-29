@@ -1,12 +1,14 @@
 package com.example.stranger.volleydemo;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -28,6 +30,7 @@ import java.util.List;
 
 public class BoxOfficeFragment extends Fragment {
     private static final String TAG = "BoxOfficeFragment";
+
     private RecyclerView rv;
     private MovieListAdapter movieListAdapter;
     private List<Movie> movies;
@@ -39,28 +42,56 @@ public class BoxOfficeFragment extends Fragment {
     private LinearLayoutManager layoutManager;
     private JSONArray movieJSONArray;
     private TextView displayingData;
-
+    private boolean isRequestSent;
     public BoxOfficeFragment() {
         // Required empty public constructor
+
+
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.d(TAG,"onCreateView");
         View view = inflater.inflate(R.layout.fragment_box_office, container, false);
         rv = (RecyclerView) view.findViewById(R.id.moviesList);
         movieListProgress = (ProgressBar) view.findViewById(R.id.movie_list_progress);
         displayingData = (TextView) view.findViewById(R.id.display);
         layoutManager = new LinearLayoutManager(getActivity());
         movies = new ArrayList<>();
-        movieListAdapter = new MovieListAdapter(getActivity(), movies);
+        movieListAdapter = new MovieListAdapter(rv,getActivity(), movies);
 
         limit = 20;
-        sendRequest();
+        if(!isRequestSent){
+            sendRequest();
+        }
+        isRequestSent=true;
         rv.setAdapter(movieListAdapter);
         rv.setLayoutManager(layoutManager);
+        rv.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
         return view;
     }
 
@@ -110,6 +141,7 @@ public class BoxOfficeFragment extends Fragment {
                 JSONObject current = list.getJSONObject(i);
                 String title = current.getString("title");
                 int runtime = current.getInt("runtime");
+                long id = current.getLong("id");
                 JSONObject release_dates = current.getJSONObject("release_dates");
                 String release = release_dates.getString("theater");
                 JSONObject posters = current.getJSONObject("posters");
@@ -118,6 +150,7 @@ public class BoxOfficeFragment extends Fragment {
                 int score = ratings.getInt("audience_score");
                 movie.setTitle(title);
                 movie.setRelease(release);
+                movie.setId(id);
                 movie.setScore(score);
                 movie.setRuntime(runtime);
                 movie.setThumbnailUrl(thumbnailUrl);

@@ -2,6 +2,7 @@ package com.example.stranger.volleydemo;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -41,13 +42,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
+public class MainActivity extends ActionBarActivity implements ActionBar.TabListener,MovieListener {
 
     private static final String TAG = "MainActivity";
     private ViewPager movieListPager;
     private MovieListPagerAdapter movieListPagerAdapter;
     private ActionBar actionBar;
-    private String[] tabs = {"Box Office","Upcoming"};
+    private String[] tabs = {"Box Office", "Upcoming", "Search"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +78,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         });
 
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        for(String tab: tabs){
+        for (String tab : tabs) {
             actionBar.addTab(actionBar.newTab().setText(tab).setTabListener(this));
         }
         /*getSupportFragmentManager().beginTransaction().add(R.id.box_office_fragment_container,new UpcomingMoviesFragment()).commit();*/
@@ -90,8 +92,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-
 
 
     @Override
@@ -110,7 +110,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
 
-
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fm) {
         movieListPager.setCurrentItem(tab.getPosition());
@@ -125,5 +124,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fm) {
 
     }
+    public void startMovieActivity(long id) {
+            Intent i = new Intent(MainActivity.this, MovieActivity.class);
+            i.putExtra("id",id);
+            startActivity(i);
+    }
+
+
 
 }

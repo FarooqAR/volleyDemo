@@ -11,20 +11,26 @@ public class MovieListPagerAdapter extends FragmentPagerAdapter {
     public MovieListPagerAdapter(FragmentManager fm) {
         super(fm);
     }
-
+    Fragment[] fragments = {
+            new BoxOfficeFragment(),
+            new UpcomingMoviesFragment(),
+            new MovieSearchFragment()
+    };
     @Override
     public Fragment getItem(int i) {
         switch (i){
             case 0:
-                return new BoxOfficeFragment();
+                return fragments[i];
             case 1:
-                return new UpcomingMoviesFragment();
+                return fragments[i];
+            case 2:
+                return fragments[i];
         }
         return null;
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return fragments.length;
     }
 }

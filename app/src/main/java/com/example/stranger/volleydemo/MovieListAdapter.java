@@ -21,21 +21,33 @@ import java.util.List;
  * Created by Stranger on 6/25/2015.
  */
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieItemViewHolder> {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "MovieListAdapter";
     private Context context;
     private List<Movie> movies;
+    private MovieListener movieListener;
+    private RecyclerView rv;
     private ImageLoader loader = AppController.getInstance().getImageLoader();
 
-    public MovieListAdapter(Context context, List<Movie> movies) {
+    public MovieListAdapter(RecyclerView rv,Context context, List<Movie> movies) {
         this.context = context;
         this.movies = movies;
+        this.rv = rv;
+        movieListener = (MovieListener) context;
 
     }
 
     @Override
-    public MovieItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public MovieItemViewHolder onCreateViewHolder(ViewGroup viewGroup,  int i) {
 
         View view = LayoutInflater.from(context).inflate(R.layout.movie_list_item,viewGroup,false);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = rv.getChildPosition(v);
+                Movie current = movies.get(position);
+                movieListener.startMovieActivity(current.getId());
+            }
+        });
         MovieItemViewHolder holder = new MovieItemViewHolder(view);
         return holder;
     }
@@ -57,7 +69,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     @Override
     public int getItemCount() {
         //return the size of data
-        return movies.size();
+        return (movies==null)?0:movies.size();
     }
 
     class MovieItemViewHolder extends RecyclerView.ViewHolder {
@@ -75,4 +87,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
         }
     }
+
+
 }
