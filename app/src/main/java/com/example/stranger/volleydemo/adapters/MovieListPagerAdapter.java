@@ -1,8 +1,12 @@
-package com.example.stranger.volleydemo;
+package com.example.stranger.volleydemo.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import com.example.stranger.volleydemo.fragments.BoxOfficeFragment;
+import com.example.stranger.volleydemo.fragments.MovieSearchFragment;
+import com.example.stranger.volleydemo.fragments.UpcomingMoviesFragment;
 
 /**
  * Created by 192.168.3.3 on 6/28/2015.

@@ -1,20 +1,19 @@
-package com.example.stranger.volleydemo;
+package com.example.stranger.volleydemo.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.example.stranger.volleydemo.AppController;
+import com.example.stranger.volleydemo.interfaces.MovieListener;
+import com.example.stranger.volleydemo.R;
+import com.example.stranger.volleydemo.modal.Movie;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,7 +44,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
             public void onClick(View v) {
                 int position = rv.getChildPosition(v);
                 Movie current = movies.get(position);
-                movieListener.startMovieActivity(current.getId());
+                movieListener.startMovieActivity(current);
             }
         });
         MovieItemViewHolder holder = new MovieItemViewHolder(view);
@@ -56,11 +55,11 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     public void onBindViewHolder(MovieItemViewHolder holder, int i) {
         //bind data to each item in recyclerView
         Movie current = movies.get(i);
-        holder.title.setText(current.title);
-        holder.release.setText("Release: "+current.release);
-        holder.score.setText(" "+current.score+"%");
-        holder.runtime.setText("Runtime: " + current.runtime + " mins");
-        holder.thumbNail.setImageUrl(current.thumbnailUrl, loader);
+        holder.title.setText(current.getTitle());
+        holder.release.setText("Release: "+current.getRelease());
+        holder.score.setText(" "+current.getScore()+"%");
+        holder.runtime.setText("Runtime: " + current.getRuntime() + " mins");
+        holder.thumbNail.setImageUrl(current.getThumbnailUrl(), loader);
 
 
     }

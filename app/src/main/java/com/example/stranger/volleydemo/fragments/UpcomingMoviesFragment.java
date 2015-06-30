@@ -1,30 +1,26 @@
-package com.example.stranger.volleydemo;
+package com.example.stranger.volleydemo.fragments;
 
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.stranger.volleydemo.AppController;
+import com.example.stranger.volleydemo.modal.Movie;
+import com.example.stranger.volleydemo.adapters.MovieListAdapter;
+import com.example.stranger.volleydemo.R;
 
-import org.apache.http.client.utils.URIUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,28 +29,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class MovieSearchFragment extends Fragment {
-    private static final String TAG = "MovieSearchFragment";
-    private String searchQ;
-    private String url;
-    private int page_limit;
+public class UpcomingMoviesFragment extends Fragment {
 
+   /*urlhttp://api.rottentomatoes.com/api/public/v1.0/lists/movies/upcoming.json?apikey=54wzfswsa4qmjg8hjwa64d4c&page_limit=14*/
+    private static final String TAG = "UpcomingMoviesFragment";
     private RecyclerView rv;
     private MovieListAdapter movieListAdapter;
     private List<Movie> movies;
+    private String url;
+
     private ProgressBar movieListProgress;
-    private String tag_json_obj = "json_movie_search_request";
+    private String tag_json_obj = "json_box_office_movies_request";
+    private int limit;
+    private boolean isRequestSent;
     private LinearLayoutManager layoutManager;
     private JSONArray movieJSONArray;
-    private String nextUrl;
-
     private TextView displayingData;
-    private int totalMovies;
-
-    public MovieSearchFragment() {
+    public UpcomingMoviesFragment() {
         // Required empty public constructor
 
     }
@@ -64,81 +55,38 @@ public class MovieSearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_movie_search, container, false);
-        final EditText searchField = (EditText) view.findViewById(R.id.search);
+View view = inflater.inflate(R.layout.fragment_upcoming_movies, container, false);
         rv = (RecyclerView) view.findViewById(R.id.moviesList);
         movieListProgress = (ProgressBar) view.findViewById(R.id.movie_list_progress);
-        movieListProgress.setVisibility(View.INVISIBLE);
         displayingData = (TextView) view.findViewById(R.id.display);
-        final ImageButton searchBtn = (ImageButton) view.findViewById(R.id.searchBtn);
-
-
         layoutManager = new LinearLayoutManager(getActivity());
         movies = new ArrayList<>();
         movieListAdapter = new MovieListAdapter(rv,getActivity(), movies);
+
+        limit = 14;
+        if(!isRequestSent) {
+            sendRequest();
+        }
+        isRequestSent=true;
         rv.setAdapter(movieListAdapter);
         rv.setLayoutManager(layoutManager);
-        rv.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
-            @Override
-            public void onChildViewAttachedToWindow(View view) {
-                TextView v1 = (TextView) view.findViewById(R.id.title);
-                String v2 = movies.get(layoutManager.getItemCount() - 1).title;
-/*
-                if (v1.getText().equals(v2)) {
-
-                    sendRequest(nextUrl+"&apikey="+AppController.API_KEY);
-                }*/
-            }
-
-            @Override
-            public void onChildViewDetachedFromWindow(View view) {
-
-            }
-        });
-        searchField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                searchQ = Uri.encode(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(searchQ!= null) {
-                    movies.clear();
-                    movieListAdapter.notifyDataSetChanged();
-                    sendRequest();
-                }
-            }
-        });
         return view;
+
     }
 
+
     private void updateDataDisplaySize() {
-        displayingData.setText("Showing " + movies.size() + " of " + totalMovies);
+        displayingData.setText("Showing " + movies.size() + " of " + limit);
     }
 
     private void updateUrl() {
-                url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=54wzfswsa4qmjg8hjwa64d4c&q=" + searchQ+"&page_limit=15";
-
+        url = "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/upcoming.json?apikey=54wzfswsa4qmjg8hjwa64d4c&page_limit="+limit;
     }
 
     public void sendRequest() {
-
-            updateUrl();
-
-
         movieListProgress.setVisibility(View.VISIBLE);
+
+        updateUrl();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -146,15 +94,11 @@ public class MovieSearchFragment extends Fragment {
                         try {
                             movieListProgress.setVisibility(View.INVISIBLE);
                             movieJSONArray = jsonObject.getJSONArray("movies");
-                            JSONObject links = jsonObject.getJSONObject("links");
-                            Log.d(TAG,""+movieJSONArray.length());
-
-                            totalMovies = jsonObject.getInt("total");
-//                            Log.d(TAG, "" + movieJSONArray);
+                            Log.d(TAG, "" + movieJSONArray);
                             setMovieList(movieJSONArray);
-                            movieListAdapter.notifyItemRangeInserted(movies.size(), page_limit);
+                            movieListAdapter.notifyDataSetChanged();
                             updateDataDisplaySize();
-                            nextUrl = links.getString("next");
+
                         } catch (JSONException e) {
                             Log.d(TAG, e.getMessage());
                         }
@@ -163,8 +107,6 @@ public class MovieSearchFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 Log.d(TAG, "" + volleyError);
-                Toast.makeText(getActivity(),""+volleyError.getMessage(),Toast.LENGTH_LONG).show();
-                movieListProgress.setVisibility(View.INVISIBLE);
             }
         });
         AppController.getInstance().addToRequestQueue(request, tag_json_obj);
@@ -179,17 +121,21 @@ public class MovieSearchFragment extends Fragment {
                 JSONObject current = list.getJSONObject(i);
                 String title = current.getString("title");
                 int runtime = current.getInt("runtime");
+                int year = current.getInt("year");
+                long id = current.getLong("id");
+                String synopsis = current.getString("synopsis");
                 JSONObject release_dates = current.getJSONObject("release_dates");
                 String release = release_dates.getString("theater");
                 JSONObject posters = current.getJSONObject("posters");
                 String thumbnailUrl = posters.getString("thumbnail");
                 JSONObject ratings = current.getJSONObject("ratings");
                 int score = ratings.getInt("audience_score");
-                long id = list.getLong(i);
-                movie.setId(id);
                 movie.setTitle(title);
                 movie.setRelease(release);
                 movie.setScore(score);
+                movie.setId(id);
+                movie.setYear(year);
+                movie.setSynopsis(synopsis);
                 movie.setRuntime(runtime);
                 movie.setThumbnailUrl(thumbnailUrl);
                 movies.add(movie);
@@ -200,5 +146,6 @@ public class MovieSearchFragment extends Fragment {
         }
 
     }
+
 
 }

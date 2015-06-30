@@ -1,4 +1,4 @@
-package com.example.stranger.volleydemo;
+package com.example.stranger.volleydemo.fragments;
 
 
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -16,6 +17,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.stranger.volleydemo.AppController;
+import com.example.stranger.volleydemo.modal.Movie;
+import com.example.stranger.volleydemo.adapters.MovieListAdapter;
+import com.example.stranger.volleydemo.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,58 +30,66 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class UpcomingMoviesFragment extends Fragment {
+public class BoxOfficeFragment extends Fragment {
+    private static final String TAG = "BoxOfficeFragment";
 
-   /*urlhttp://api.rottentomatoes.com/api/public/v1.0/lists/movies/upcoming.json?apikey=54wzfswsa4qmjg8hjwa64d4c&page_limit=14*/
-    private static final String TAG = "UpcomingMoviesFragment";
     private RecyclerView rv;
     private MovieListAdapter movieListAdapter;
     private List<Movie> movies;
     private String url;
-
     private ProgressBar movieListProgress;
     private String tag_json_obj = "json_box_office_movies_request";
     private int limit;
-    private boolean isRequestSent;
+
     private LinearLayoutManager layoutManager;
     private JSONArray movieJSONArray;
     private TextView displayingData;
-    public UpcomingMoviesFragment() {
+    private boolean isRequestSent;
+
+    public BoxOfficeFragment() {
         // Required empty public constructor
+
 
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
+        movies = new ArrayList<>();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-View view = inflater.inflate(R.layout.fragment_upcoming_movies, container, false);
+        Log.d(TAG, "onCreateView");
+        View view = inflater.inflate(R.layout.fragment_box_office, container, false);
         rv = (RecyclerView) view.findViewById(R.id.moviesList);
         movieListProgress = (ProgressBar) view.findViewById(R.id.movie_list_progress);
         displayingData = (TextView) view.findViewById(R.id.display);
         layoutManager = new LinearLayoutManager(getActivity());
-        movies = new ArrayList<>();
-        movieListAdapter = new MovieListAdapter(rv,getActivity(), movies);
+        movieListProgress.setVisibility(View.INVISIBLE);
+        movieListAdapter = new MovieListAdapter(rv, getActivity(), movies);
 
-        limit = 14;
-        if(!isRequestSent) {
+        limit = 20;
+        if (!isRequestSent) {
             sendRequest();
+            isRequestSent = true;
         }
-        isRequestSent=true;
+
         rv.setAdapter(movieListAdapter);
         rv.setLayoutManager(layoutManager);
+
         return view;
-
     }
-
 
     private void updateDataDisplaySize() {
         displayingData.setText("Showing " + movies.size() + " of " + limit);
     }
 
     private void updateUrl() {
-        url = "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/upcoming.json?apikey=54wzfswsa4qmjg8hjwa64d4c&page_limit="+limit;
+        url = "http://api.rottentomatoes.com/api/public/v1.0/lists/movies/box_office.json?apikey=54wzfswsa4qmjg8hjwa64d4c&limit=" + limit;
     }
 
     public void sendRequest() {
@@ -92,7 +105,7 @@ View view = inflater.inflate(R.layout.fragment_upcoming_movies, container, false
                             movieJSONArray = jsonObject.getJSONArray("movies");
                             Log.d(TAG, "" + movieJSONArray);
                             setMovieList(movieJSONArray);
-                            movieListAdapter.notifyItemRangeInserted(movies.size(), limit);
+                            movieListAdapter.notifyDataSetChanged();
                             updateDataDisplaySize();
 
                         } catch (JSONException e) {
@@ -117,9 +130,9 @@ View view = inflater.inflate(R.layout.fragment_upcoming_movies, container, false
                 JSONObject current = list.getJSONObject(i);
                 String title = current.getString("title");
                 int runtime = current.getInt("runtime");
+                int year = current.getInt("year");
                 long id = current.getLong("id");
-                Log.d(TAG,""+current);
-                Log.d(TAG,"id="+id);
+                String synopsis = current.getString("synopsis");
                 JSONObject release_dates = current.getJSONObject("release_dates");
                 String release = release_dates.getString("theater");
                 JSONObject posters = current.getJSONObject("posters");
@@ -130,6 +143,8 @@ View view = inflater.inflate(R.layout.fragment_upcoming_movies, container, false
                 movie.setRelease(release);
                 movie.setScore(score);
                 movie.setId(id);
+                movie.setYear(year);
+                movie.setSynopsis(synopsis);
                 movie.setRuntime(runtime);
                 movie.setThumbnailUrl(thumbnailUrl);
                 movies.add(movie);
@@ -140,6 +155,4 @@ View view = inflater.inflate(R.layout.fragment_upcoming_movies, container, false
         }
 
     }
-
-
 }

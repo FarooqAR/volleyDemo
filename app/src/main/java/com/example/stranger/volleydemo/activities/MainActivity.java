@@ -1,45 +1,22 @@
-package com.example.stranger.volleydemo;
+package com.example.stranger.volleydemo.activities;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.NetworkImageView;
+import com.example.stranger.volleydemo.adapters.MovieListPagerAdapter;
+import com.example.stranger.volleydemo.interfaces.MovieListener;
+import com.example.stranger.volleydemo.R;
+import com.example.stranger.volleydemo.modal.Movie;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener,MovieListener {
@@ -124,9 +101,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fm) {
 
     }
-    public void startMovieActivity(long id) {
+    public void startMovieActivity(Movie movie) {
             Intent i = new Intent(MainActivity.this, MovieActivity.class);
-            i.putExtra("id",id);
+            i.putExtra("movie", (Serializable) movie);
             startActivity(i);
     }
 

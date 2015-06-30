@@ -1,4 +1,4 @@
-package com.example.stranger.volleydemo;
+package com.example.stranger.volleydemo.volley;
 
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
